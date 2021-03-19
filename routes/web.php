@@ -15,5 +15,8 @@ $route->group('/todo-list', function(){
     $this->get('/index', 'Modules\TodoList\Controller\TodoListController@index');
     $this->get('/create', 'Modules\TodoList\Controller\TodoListController@create');
     $this->post('/store', 'Modules\TodoList\Controller\TodoListController@store');
+    $this->get('/{id}:([1-9]{1}[0-9]*)/edit', 'Modules\TodoList\Controller\TodoListController@edit');
+    $this->post('/{id}:([1-9]{1}[0-9]*)/update', 'Modules\TodoList\Controller\TodoListController@update');
+    $this->get('/{id}:([1-9]{1}[0-9]*)/delete', 'Modules\TodoList\Controller\TodoListController@delete');
 });
 $route->end(); 

@@ -1,0 +1,46 @@
+{% extends "template.html" %}
+
+{% block title %}Update Todo List{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="raw">
+                <h1 class="text-center">Update Todo List</h1>
+            </div>
+            <div class="raw">
+                <form action="/todo-list/{{ result.id }}/update" method="POST">
+                    <div class="form-group {{ errors.work_name ? 'has-error' : null }}">
+                        <label for="labelWorkName">Work Name (*)</label>
+                        <input type="text" name="work_name" class="form-control" id="labelWorkName" placeholder="Work Name" value="{{ result.work_name }}">
+                        <span class="help-block">{{ errors.work_name }}</span>
+                    </div>
+                    <div class="form-group {{ errors.starting_date ? 'has-error' : null }}">
+                        <label for="labelStartingDate">Starting Date (*)</label>
+                        <input type="date" name="starting_date" class="form-control" min={{ 'now'|date('Y-m-d', timezone="Asia/Ho_Chi_Minh") }} value="{{ result.starting_date }}">
+                        <span class="help-block">{{ errors.starting_date }}</span>
+                    </div>
+                    <div class="form-group {{ errors.ending_date ? 'has-error' : null }}">
+                        <label for="exampleInputEmail2">Ending Date (*)</label>
+                        <input type="date" class="form-control" name="ending_date" min={{ 'now'|date('Y-m-d', timezone="Asia/Ho_Chi_Minh") }} value="{{ result.ending_date }}">
+                        <span class="help-block">{{ errors.ending_date }}</span>
+                    </div>
+                    <button type="submit" class="btn btn-info">Update Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+<script>
+    $('input[name="starting_date"]').on('change', function(){
+        let starting_date = $(this).val();
+        let startingDateCompare = new Date(starting_date);
+        let ending_date_compare = new Date($('input[name="ending_date"]').val());
+        $('input[name="ending_date"]').attr('min', starting_date)
+        if(startingDateCompare.getTime() > ending_date_compare.getTime()) {
+            $('input[name="ending_date"]').val(starting_date);
+        }
+    });
+</script>
+{% endblock %}

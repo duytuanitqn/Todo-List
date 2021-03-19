@@ -155,4 +155,95 @@ class TodoListController extends BaseController
         }
         return $error;
     }
+
+    /**
+     * Display view edit todo list
+     *
+     * @param $id integer [id todo list]
+     *
+     * @return void
+     */
+    public function edit($id)
+    {
+        try {
+            $result = $this->todoList->findTodoList($id);
+            if(empty($result)) {
+                echo "PAGE NOT FOUND";
+                die();
+            }
+            $error = array();
+            if(isset($_SESSION["errors"])){
+                $error = $_SESSION["errors"];
+                unset($_SESSION["errors"]);
+            }
+            $data = [
+                'errors' => $error,
+                'result' => $result
+            ];
+            $this->loadView("TodoList\Views\update.html", $data);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            die();
+        }
+    }
+
+    /**
+     * Update todo list
+     *
+     * @param $id integer [id todo list]
+     *
+     * @return void
+     */
+    public function update($id)
+    {
+        try {
+            if($_SERVER["REQUEST_METHOD"] == "POST") {
+                $workName = $this->validate->trimInput(app('request')->body['work_name']);
+                $startingDate = $this->validate->trimInput(app('request')->body['starting_date']);
+                $endingDate = $this->validate->trimInput(app('request')->body['ending_date']);
+                $errorValidate = $this->validateRequestCreateTodoList($workName, $startingDate, $endingDate);
+                if(!empty($errorValidate)) {
+                    $_SESSION["errors"] = $errorValidate;
+                    $this->redirect("/todo-list/$id/edit");
+                } else {
+                    $args = [
+                        "work_name" => $workName,
+                        "starting_date" => $startingDate,
+                        "ending_date" => $endingDate
+                    ];
+                    if($this->todoList->updateTodoList($id, $args)) {
+                        $this->redirect('/todo-list/index');
+                    } else {
+                        echo "The record update is error";
+                    }
+                }
+            } else {
+                echo "Method not allow";
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            die();
+        }
+    }
+
+    /**
+     * Delete todo list
+     *
+     * @param $id integer [id todo list]
+     *
+     * @return void
+     */
+    public function delete($id)
+    {
+        try {
+            if($this->todoList->deleteTodoList($id)) {
+                $this->redirect('/todo-list/index');
+            } else {
+                echo "can`t delete record";
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            die();
+        }
+    }
 }
