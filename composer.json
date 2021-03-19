@@ -1,0 +1,31 @@
+{
+    "name": "tuannd/todo_list",
+    "description": "phpframwork",
+    "keywords": ["phpframwork", "search"],
+    "type": "package",
+    "require": {
+        "php": ">=7.0.0",
+        "guzzlehttp/guzzle": "^6.2",
+        "maximebf/debugbar": ">=1.0.0",
+        "nezamy/route": "1.2.2",
+        "twig/twig": "~2.0",
+        "vlucas/phpdotenv": "~2.4",
+        "symfony/process": "3.4.*",
+        "robmorgan/phinx": "dev-master"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~4.0",
+        "phpspec/phpspec": "~2.1"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "Modules\\": "modules/"
+        }
+    },
+    "version": "1.0.0",
+    "minimum-stability": "dev"
+}

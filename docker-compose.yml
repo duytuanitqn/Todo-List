@@ -1,0 +1,65 @@
+version: '3'
+#Networks
+networks:
+  todo-list-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
+services:
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/php7.2/Dockerfile
+    image: php7.2
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "9000:9000"
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php7.2/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - todo-list-network
+  #Nginx Service
+  webserver:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    image: nginx
+    container_name: web_server
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/sites-available/:/etc/nginx/sites-available/
+    networks:
+      - todo-list-network
+  #MySQL Service
+  database:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    image: mysql
+    container_name: database
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: todolist
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: mypass
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - todo-list-network
