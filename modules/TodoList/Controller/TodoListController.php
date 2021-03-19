@@ -41,7 +41,7 @@ class TodoListController extends BaseController
     public function index()
     {
         try {
-            $currentPage = isset(app('request')->query['page']) ? app('request')->query['page'] : $this::DEFAULT_CURRENT_PAGE;
+            $currentPage = isset(app('request')->query['page']) ? (int)app('request')->query['page'] : $this::DEFAULT_CURRENT_PAGE;
             $totalRecords = $this->todoList->countTotalRecord();
             $data = [];
             if ($totalRecords > 0) {
@@ -245,5 +245,59 @@ class TodoListController extends BaseController
             echo $e->getMessage();
             die();
         }
+    }
+     /**
+     * Get calendar todo list
+     *
+     * @return mixed
+     */
+    public function getCalendar()
+    {
+        $this->loadView("TodoList\Views\calendar.html");
+    }
+
+    /**
+     * Get events todo list using ajax
+     *
+     * @return object
+     */
+    public function getEventCalendar()
+    {
+        $results = $this->todoList->getTodoList();
+        $events = array(
+            'date_now' => date('Y-m-d'),
+        );
+        foreach($results as $item) {
+            $constraint = 'availableForEvent'.$item['id'];
+            if(strtotime(date("Y-m-d", strtotime($item['created_at']))) < strtotime($item['starting_date'])) {
+                $events['events'][] = [
+                    'title' => 'Task Name:'.$item['work_name'].', Status: (Planning)',
+                    'start' => date("Y-m-d", strtotime($item['created_at'])),
+                    'end' => $item['starting_date'],
+                    "constraint" => $constraint, // defined below
+                    "color" => '#006666'
+                ];
+            }
+            $events['events'][] = [
+                'title' => 'Task Name:'.$item['work_name'].', Status: (Doing)',
+                'start' => $item['starting_date'],
+                'end' => $item['ending_date'],
+                "constraint" => $constraint, // defined below
+                "color" => '#FF3300'
+            ];
+            $events['events'][] = [
+                'title' => 'Task Name:'.$item['work_name'].', Status: (Complete)',
+                'start' => $item['ending_date'],
+                "constraint" => $constraint, // defined below
+                "color" => '#00AA00'
+            ];
+            $events['events'][] = [
+                'id' => $constraint,
+                'start' => $item['starting_date'],
+                'end' => $item['ending_date'],
+                'rendering' => 'background'
+            ];
+        }
+        print(json_encode($events));
     }
 }
