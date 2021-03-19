@@ -1,0 +1,57 @@
+{% extends "template.html" %}
+
+{% block title %}Create Todo List{% endblock %}
+{% block css %}
+<link href='/public/assets/fullcalendar/css/fullcalendar.min.css' rel='stylesheet' />
+<link href='/public/assets/fullcalendar/css/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="raw">
+                <h1 class="text-center">Todo List Calendar</h1>
+            </div>
+            <div class="raw text-right" style="margin-bottom:5px">
+                <a href="/todo-list/create" class="btn btn-success">Create Stask</a>
+                <a href="/todo-list/index" class="btn btn-info">List Stask</a>
+            </div>
+            <div class="raw">
+                <div id='calendar'></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+<script src='/public/assets/moment/moment.min.js'></script>
+<script src='/public/assets/fullcalendar/js/fullcalendar.min.js'></script>
+<script>
+    var e = '';
+    $(document).ready(function() {
+        $.ajax({
+            url: '/todo-list/canlendar/event',
+            method: "GET",
+            contentType: "application/json",
+            dataType: 'json',
+            success:function(response) {
+                console.log('response:', response.events);
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    defaultDate: response.date_now,
+                    navLinks: true, // can click day/week names to navigate views
+                    businessHours: false, // display business hours
+                    editable: true,
+                    events: response.events
+                });
+            },
+            error:function(error) {
+                console.log('errorasdasd:', error);
+            },
+        });
+        
+    });
+</script>
+{% endblock %}
