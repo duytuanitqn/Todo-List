@@ -11,5 +11,9 @@
 |
 */
 $route->get('/', 'Modules\TodoList\Controller\TodoListController@index');
-
+$route->group('/todo-list', function(){
+    $this->get('/index', 'Modules\TodoList\Controller\TodoListController@index');
+    $this->get('/create', 'Modules\TodoList\Controller\TodoListController@create');
+    $this->post('/store', 'Modules\TodoList\Controller\TodoListController@store');
+});
 $route->end(); 
