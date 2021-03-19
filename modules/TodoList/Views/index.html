@@ -12,6 +12,75 @@
                 <a href="/todo-list/create" class="btn btn-success">Create</a>
                 <a href="/" class="btn btn-info">View Calendar</a>
             </div>
+            <div class="raw">
+                <table class="table table-bordered" style="margin-bottom:0px;">
+                    <thead>
+                      <tr>
+                        <th>Work Name</th>
+                        <th>Starting Date</th>
+                        <th>Ending Date</th>
+                        <th>Created At</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% if(total_record > 0) %}
+                            {% for item in results %}
+                            <tr>
+                                <td>{{ item.work_name }}</td>
+                                <td>{{ item.starting_date }}</td>
+                                <td>{{ item.ending_date }}</td>
+                                <td>{{ item.created_at }}</td>
+                                <td>
+                                    <a href="/todo-list/{{ item.id }}/edit" class="btn btn-info">Edit</a>
+                                    <a href="/todo-list/{{ item.id }}/delete" class="btn btn-danger" onClick="return confirm('Are you sure you want to delete?');">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">0 Result</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% if(total_page > 1) %}
+                <nav aria-label="Page navigation" class="text-right">
+                    <ul class="pagination">
+                        {% if(current_page <= 1)%}
+                            <li class="disabled">
+                                <a href="javascript:void(0);" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/todo-list/index?page={{ previous }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for i in range(low=1, high=total_page, step=1) %}
+                            <li {% if(current_page == i)%} class="active" {% endif %}><a href="/todo-list/index?page={{ i }}" >{{ i }}</a></li>
+                        {% endfor %}
+                        {% if(current_page >= total_page) %}
+                            <li  class="disabled" >
+                                <a href="javascript:void(0);" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/todo-list/index?page={{ next }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
